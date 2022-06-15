@@ -59,7 +59,6 @@ class DiscreteCruiseControl(gym.Env):
             done = True
         info = {
                 'rel_dis': self.rel_dis,
-                'rel_dis_noisy': rel_dis_noisy,
                 'rel_vel': self.rel_vel,
                 'rel_acc': rel_acc
                 }
