@@ -38,6 +38,9 @@ class MPCLinear():
         self.SAFETY_DIST    = 5
         self.THROTTLE_LIMIT = 1
         self.VELOCITY_LIMIT = 40
+        self.ACC_LIMIT      = 1.5
+        self.JERK_LIMIT     = 2
+        self.TH             = 0.0
 
     def action(self, obs):
         X = cp.Variable((self.nx, self.T))
@@ -46,12 +49,14 @@ class MPCLinear():
         cost = 0.0
         constraints = []
 
-        x0      = obs[0:2]
+        x0      = obs[0:5]
         ego_vel = obs[2]
-        nd = obs[3]
-        C  = np.array([[0, -nd],
-                       [0, 0]])
-        xmin = [5.5, 0]
+        nd = obs[5]
+        C = np.array([[1, 0, -(self.TH + nd), 0, 0],
+                      [0, 1, 0, 0, 0],
+                      [0, 0, 0, 1, 0],
+                      [0, 0, 0, 0, 1]])
+        yref = [5.0, 0, 0, 0]
 
         fv_vel = x0[1] + ego_vel
 
@@ -69,10 +74,8 @@ class MPCLinear():
                 cost += cp.quad_form(U[:,t], self.R)
 
             if t != 0:
-                scaling = np.array([max(x0[0],self.SAFETY_DIST), self.VELOCITY_LIMIT])
-                # cost += cp.quad_form((X[:, t] - (xmin + C @ X[:, t]))/scaling, self.Q)
-                xref = [xmin[0] + ego_vel*nd, 0]
-                cost += cp.quad_form((X[:, t] - xref)/scaling, self.Q)
+                scaling = np.array([max(x0[0],self.SAFETY_DIST), self.VELOCITY_LIMIT, self.ACC_LIMIT, self.JERK_LIMIT])
+                cost += cp.quad_form((C @ X[:, t] - yref)/scaling, self.Q)
 
             if t < (self.T - 1):
                 constraints += [X[:, t + 1] == self.A @ X[:, t] + self.B @ U[:, t] + self.G @ md]
@@ -112,13 +115,23 @@ class MPCLinear():
     
 
 def InitializeMPC(Ts):
-    A = np.array([[1, Ts],
-                [0,  1]])
-    B = 1.5*np.array([[-0.5*Ts*Ts],
-                [-Ts]])
-    G = np.array([[0.5*Ts*Ts],
-                [Ts]])
+    tau = 0.5
+    A = np.array([[1, Ts, 0, -1/2*Ts**2, 0],
+                  [0, 1, 0, -Ts, 0],
+                  [0, 0, 1, Ts, 0],
+                  [0, 0, 0, (1-Ts/tau),0],
+                  [0, 0, 0, -1/tau, 0]])
+    B = 1.5*np.array([[0],
+                      [0],
+                      [0],
+                      [Ts/tau],
+                      [1/tau]])
+    G = np.array([[1/2*Ts**2],
+                  [Ts],
+                  [0],
+                  [0],
+                  [0]])
     T = 20
-    Q = np.diag([10, 10])
-    R = np.array([1])
+    Q = np.diag([2, 2, 2, 2])
+    R = np.array([10])
     return MPCLinear(A, B, G, Q, R, T, Ts)

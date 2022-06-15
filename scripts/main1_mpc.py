@@ -4,7 +4,7 @@ Jai Shri Ram
 import gym 
 import gym_cruise_ctrl
 import numpy as np
-from mpc import InitializeMPC, MPCLinear
+from mpc1 import InitializeMPC, MPCLinear
 import os
 
 from plotting_utils import PlotTrainResults, PlotTestResults
@@ -12,7 +12,7 @@ from plotting_utils import PlotTrainResults, PlotTestResults
 """
 ### Script inputs 
 """
-env_version = 'cruise-ctrl-v0'
+env_version = 'cruise-ctrl-v1'
 train = False
 noisy_depth = False
 
@@ -37,13 +37,13 @@ plot_test_results = PlotTestResults()
 while True:
     
     u, x, md = modelMPC.action(obs)
-    # print(x[0])
-    # print(u)
+    print(u[0,0])
     try:
         action = np.array([u[0,0]])
     except:
         action = np.array([0])
         print('exception') 
+    # action = np.array([0.1])
     obs, reward, done, info = env.step(action)
 
     plot_test_results.store(obs, reward, info) # Gather results for plotting

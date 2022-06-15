@@ -58,7 +58,7 @@ class PlotTestResults():
         self.reward_to_go_list.append(self.reward_to_go_list[-1] + reward)
         self.rel_dis_list.append(obs[0])
         self.rel_vel_list.append(obs[1])
-        self.nd_list.append(obs[3])
+        self.nd_list.append(obs[5])
 
         self.fv_pos_list.append(info["fv_pos"])
         self.fv_vel_list.append(info["fv_vel"])
