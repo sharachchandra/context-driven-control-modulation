@@ -31,6 +31,13 @@ ending_rel_dist_tuple = (max_rel_dist - del_rel_dist, max_rel_dist)
 starting_rel_vel_tuple = (min_rel_vel, min_rel_vel + del_rel_vel) 
 ending_rel_vel_tuple = (max_rel_vel - del_rel_vel, max_rel_vel)
 
+def unique(list1):
+	unique_list = []
+	for x in list1:
+		if x not in unique_list:
+			unique_list.append(x)
+
+	return unique_list
 
 for i in range(int((max_rel_dist - min_rel_dist) / del_rel_dist)):
 	rel_dist_tuples.append((min_rel_dist + i * del_rel_dist, min_rel_dist + (i + 1) * del_rel_dist))
@@ -172,13 +179,7 @@ for state_rel_dist in rel_dist_tuples:
 
 transitions_with_state_labels = []
 
-def unique(list1):
-	unique_list = []
-	for x in list1:
-		if x not in unique_list:
-			unique_list.append(x)
 
-	return unique_list
 
 for mdp_transitions in cruise_control_mdp_transitions:
 
