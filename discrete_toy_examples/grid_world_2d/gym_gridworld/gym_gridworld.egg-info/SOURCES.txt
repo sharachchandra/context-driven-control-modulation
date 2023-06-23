@@ -10,3 +10,5 @@ gym_gridworld/envs/gridworld.py
 gym_gridworld/envs/gridworld1.py
 gym_gridworld/envs/gridworld2.py
 gym_gridworld/envs/gridworld3.py
+gym_gridworld/envs/gridworld4.py
+gym_gridworld/envs/print_shield_np.py

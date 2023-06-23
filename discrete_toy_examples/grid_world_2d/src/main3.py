@@ -1,3 +1,7 @@
+'''
+CONSTANT TIME DELAY GRID WORLD EXPERIMENTS
+'''
+
 import gym
 import gym_gridworld
 import gym_pacman
@@ -14,21 +18,22 @@ import utils.plotting as plotting
 
 # This main file is for the grid-world scenario where the controller has no idea a time-delay exists
 env = gym.make("gridworld-v3")
-network_delay = 2
-shield_loc = 'gym_gridworld/gym_gridworld/envs/shields/state_action_values_'+str(network_delay)+'_td.npy'
+network_delay = 3
+shield_loc = 'gym_gridworld/gym_gridworld/envs/shields_RAL/Qmax_values_'+str(network_delay)+'_td.npy'
+# shield_loc = 'gym_gridworld/gym_gridworld/envs/shields/state_action_values_'+str(network_delay)+'_td.npy'
 active_shield = True
-threshold = 0.99
+threshold = 1
 # csv_file_name = 'src/paper/pmax_values_cd_' + str(network_delay) + '_delta_' + str(threshold)+'.csv'
 csv_file_name = 'temp.csv'
-controller_name = 'temp.pkl'
+controller_name = 'Q_td0_ns_8x8.pkl'
 
 env.activate_shield(active_shield, shield_loc, threshold)
 env.set_network_delay(network_delay)
 env.set_pmax_csv_file_name(csv_file_name)
 
-train = True
+train = False
 num_episodes = 10000
-num_episodes_test = 1000
+num_episodes_test = 10000
 
 modelsPath = os.path.join(os.path.dirname(sys.argv[0]), 'models')
 plotsPath = os.path.join(os.path.dirname(sys.argv[0]), 'plots')
@@ -54,7 +59,10 @@ else:
 
 
 stats = q_learning_test_pm(env, Q, epsilon = 0.0, num_episodes=num_episodes_test)
-print(stats.game_status)
+print(f'{int(stats.game_status[0])}, \
+      {int(stats.game_status[1])}, \
+        {int(stats.game_status[2])}')
+
 # fig5, fig6 = plotting.plot_test_stats_pm(stats, noshow=True)
 # fig5.savefig(os.path.join(plotsPath, 'img5.png'))
 # fig6.savefig(os.path.join(plotsPath, 'img6.png'))

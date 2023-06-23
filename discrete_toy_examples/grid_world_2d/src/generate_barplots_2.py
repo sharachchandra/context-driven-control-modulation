@@ -43,38 +43,38 @@ stacks = ["Loss", "Win", "Tie"]
 
 # create fake dataframes
 df1 = pd.DataFrame([[0,100,0],
-                    [10,90,0],
-                    [12,88,0],
-                    [12,88,0],
-                    [2,98,0]],
+                    [15,85,0],
+                    [14,86,0],
+                    [14,86,0],
+                    [1,98,1]],
                    index=index,
                    columns=stacks)
 df2 = pd.DataFrame([[0,100,0],
-                    [4,91,5],
-                    [9,84,7],
-                    [9,80,11],
+                    [5,89,6],
+                    [9,83,8],
+                    [11,71,18],
                     [0,99,1]],
                    index=index,
                    columns=stacks)
 df3 = pd.DataFrame([[0,100,0],
-                    [0,92,8],
-                    [3,80,17],
-                    [6,74,20],
+                    [0,90,10],
+                    [3,73,24],
+                    [8,65,27],
                     [0,99,1]],
                    index=index,
                    columns=stacks)
 df4 = pd.DataFrame([[0,100,0],
                     [0,88,12],
                     [0,68,32],
-                    [0,47,53],
+                    [0,55,45],
                     [0,97,3]],
                    index=index,
                    columns=stacks)
 df5 = pd.DataFrame([[0,100,0],
-                    [0,0,100],
-                    [0,0,100],
-                    [0,1,99],
-                    [0,0,100]],
+                    [0,79,21],
+                    [0,74,26],
+                    [0,66,34],
+                    [0,75,25]],
                    index=index,
                    columns=stacks)
 
@@ -117,7 +117,7 @@ colors = [orange_sns,
 
 hatches = ['**','','\\\\']
 
-fig, ax = plt.subplots(figsize=(6.4,4.3))
+fig, ax = plt.subplots(figsize=(7.4,3.8))
 groups = dfall.groupby("Game status")
 for i, k in enumerate(stacks):
     sns.barplot(ax=ax,data=groups.get_group(k),
@@ -143,7 +143,7 @@ bp = mpatches.Patch(edgecolor = blue_sns, facecolor= blue_sns, label='Tie')
 
 # legend1 = plt.legend(title="Threshold",handles=[t1,t2,t3,t4,t5], loc="upper left", bbox_to_anchor=(1, 1))
 
-legend2 = plt.legend(handles=[wp,lp,bp], loc="center left", ncol = 3, bbox_to_anchor=(0.0, 1.4),frameon=False,
+legend2 = plt.legend(handles=[wp,lp,bp], loc="lower left", ncol = 1, bbox_to_anchor=(1.0, 0.5),frameon=False,
                      title='Game Status',title_fontproperties={'weight':'bold'}, alignment='left')
 ax.xaxis.set_tick_params(bottom=False, labelbottom = True)
 # ax.set_title("Constant Time Delay")
@@ -172,4 +172,4 @@ ax2.grid(False)
 # sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
 plt.title('Threshold', fontsize=LEGEND_FONT_SIZE, weight='bold')
 plt.tight_layout()
-plt.savefig('src/paper/gw_emp.pdf')
+plt.savefig('src/paper/gw_emp_RAL.pdf')
