@@ -43,46 +43,46 @@ stacks = ["Loss", "Win", "Tie"]
 
 # create fake dataframes
 df1 = pd.DataFrame([[0,100,0],
+                    [14,86,0],
+                    [14,86,0],
                     [15,85,0],
-                    [14,86,0],
-                    [14,86,0],
-                    [1,98,1]],
+                    [1,99,0]],
                    index=index,
                    columns=stacks)
 df2 = pd.DataFrame([[0,100,0],
-                    [5,89,6],
+                    [9,88,3],
                     [9,83,8],
-                    [11,71,18],
+                    [11,72,17],
                     [0,99,1]],
                    index=index,
                    columns=stacks)
 df3 = pd.DataFrame([[0,100,0],
-                    [0,90,10],
+                    [5,89,6],
                     [3,73,24],
-                    [8,65,27],
+                    [4,59,37],
                     [0,99,1]],
                    index=index,
                    columns=stacks)
 df4 = pd.DataFrame([[0,100,0],
-                    [0,88,12],
-                    [0,68,32],
-                    [0,55,45],
+                    [0,91,9],
+                    [0,74,26],
+                    [1,49,50],
                     [0,97,3]],
                    index=index,
                    columns=stacks)
 df5 = pd.DataFrame([[0,100,0],
-                    [0,79,21],
+                    [0,91,9],
                     [0,74,26],
-                    [0,66,34],
-                    [0,75,25]],
+                    [1,30,69],
+                    [0,25,75]],
                    index=index,
                    columns=stacks)
 
 df1["Threshold"] = "0.0"
-df2["Threshold"] = "0.9"
-df3["Threshold"] = "0.95"
-df4["Threshold"] = "0.999"
-df5["Threshold"] = "1.0"
+df2["Threshold"] = "0.8"
+df3["Threshold"] = "0.9"
+df4["Threshold"] = "0.95"
+df5["Threshold"] = "0.99"
 
 dfall = pd.concat([pd.melt(i.reset_index(names=["Time Delay"]), 
                    id_vars=["Threshold", "Time Delay"],
@@ -92,7 +92,7 @@ dfall = pd.concat([pd.melt(i.reset_index(names=["Time Delay"]),
                    ignore_index=True)
 
 dfall.set_index(["Threshold", "Time Delay", "Game status"], inplace=True)
-dfall["Outcome Percentage"] = dfall.groupby(level=["Threshold", "Time Delay"]).cumsum()
+dfall["Outcome (%)"] = dfall.groupby(level=["Threshold", "Time Delay"]).cumsum()
 dfall.reset_index(inplace=True) 
 print(dfall)
 
@@ -122,7 +122,7 @@ groups = dfall.groupby("Game status")
 for i, k in enumerate(stacks):
     sns.barplot(ax=ax,data=groups.get_group(k),
                      x="Time Delay",
-                     y="Outcome Percentage",
+                     y="Outcome (%)",
                      hue="Threshold",
                      palette=[colors[i]]*5,
                      zorder=-i, # so first bars stay on top
@@ -153,7 +153,7 @@ tick_loc = np.array(5*[0.1] + 5*[0.3] + 5*[0.5] + 5*[0.7] + 5*[0.9]) + \
            np.array(5*[-2*dt, -dt, 0.0, dt, 2*dt])
 
 ax2.set_xticks(tick_loc)
-ax2.set_xticklabels(5*['0','0.90','0.95','0.99','1'])
+ax2.set_xticklabels(5*['0','0.8','0.9','0.95','0.99'])
 ax2.xaxis.set_tick_params(labeltop = True, 
                           top = True, 
                           labelbottom = False, 
@@ -170,6 +170,6 @@ ax2.grid(False)
 # ax.add_artist(legend1)
 # ax.add_artist(legend2)
 # sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
-plt.title('Threshold', fontsize=LEGEND_FONT_SIZE, weight='bold')
+plt.title('Desired Safety', fontsize=LEGEND_FONT_SIZE, weight='bold')
 plt.tight_layout()
-plt.savefig('src/paper/gw_emp_RAL.pdf')
+plt.savefig('src/paper/gw_emp_RAL.eps', format='eps', dpi=300)

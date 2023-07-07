@@ -35,14 +35,8 @@ class Gridworld3(gym.Env):
 
     def convert_state_to_int(self, state):
         num_xbins=8
-        if self.time_delay == 0:
-            increments = [(num_xbins**3)*2, (num_xbins**2)*2, num_xbins*2, 2, 1]
-            return np.sum(np.multiply(list(state), increments))
-        else :
-            increments = [1,2] + [2*(self.n_action**td_idx) for td_idx in range(1,self.time_delay)] + \
-                         [2*self.n_action**self.time_delay*(num_xbins**iid) for iid in range(4)]
-            increments.reverse()
-            return np.sum(np.multiply(list(state), increments))
+        increments = [(num_xbins**3)*2, (num_xbins**2)*2, num_xbins*2, 2, 1]
+        return np.sum(np.multiply(list(state), increments))
 
     def set_pmax_csv_file_name(self, filename):
         self.filename = filename
@@ -56,7 +50,7 @@ class Gridworld3(gym.Env):
         self.shield_active = val
         print("-----------------------------")
         print(path)
-        self.probList = np.load(path, allow_pickle = True)
+        self.probList = np.load(path, allow_pickle = True).item()
         self.prob_threshold = threshold
 
     def trans_right(self, state):
@@ -122,16 +116,19 @@ class Gridworld3(gym.Env):
             action_shield = 0
             prob_max = -1.0
             prob_list = []  # for debugging purposes
-            aug_state = tuple(self.state_list[0].tolist())
+            aug_state = tuple(self.state_list[0].tolist()) + (1,)
+            # print(aug_state)
+            aug_state = self.convert_state_to_int(aug_state)
             if self.time_delay > 0:
-                aug_state = tuple(self.state_list[0].tolist() + self.action_list.tolist()) + (1,)
+                aug_state = tuple([aug_state] + self.action_list.tolist())
             else:
-                aug_state = tuple(self.state_list[0].tolist()) + (1,)
+                aug_state = (aug_state,)
 
             for i in range(5):
                 obs_loc = self.state_list[0].tolist()
                 
-                prob = self.probList[self.convert_state_to_int(aug_state)][i]
+                # prob = self.probList[self.convert_state_to_int(aug_state)][i]
+                prob = self.probList[(aug_state, i)]
                 if action == i:
                     prob_action = prob
 
